@@ -46,8 +46,10 @@ export const HistoryList = styled.div`
       font-size: 0.875rem;
       line-height: 1.6;
 
+      width: 20%;
+
       &:first-child {
-        width: 50%;
+        width: 40%;
         padding-left: 1.5rem;
       }
       &:last-child {
@@ -64,7 +66,7 @@ const StatusColors = {
 } as const
 
 interface StatusProps {
-  statusColor: keyof typeof StatusColors
+  $statusColor: keyof typeof StatusColors
 }
 
 export const Status = styled.span<StatusProps>`
@@ -78,7 +80,7 @@ export const Status = styled.span<StatusProps>`
     height: 0.5rem;
     border-radius: 100%;
     background-color: ${(props) => {
-      return props.theme[StatusColors[props.statusColor]]
+      return props.theme[StatusColors[props.$statusColor]]
     }};
   }
 `

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useCycleTimer } from '../hooks/useCycleTimer'
-import { addMinutes } from 'date-fns'
+import { addMilliseconds, addMinutes } from 'date-fns'
 
 interface Cycle {
   id: string
@@ -18,7 +18,9 @@ type NewCycleParams = {
 }
 
 interface CyclesContextData {
+  cycles: Cycle[]
   activeCycle: Cycle | undefined
+  remainingSeconds: number
   stopActiveCycle(): void
   finishActiveCycle(): void
   createNewCycle(params: NewCycleParams): void
@@ -34,6 +36,8 @@ export function CyclesContextProvider({ children }: React.PropsWithChildren) {
     return cycle.id === activeCycleId
   })
 
+  const timer = useCycleTimer(activeCycle, { onFinish: finishActiveCycle })
+
   function createNewCycle({ task, durationInMinutes }: NewCycleParams) {
     const newCycle: Cycle = {
       id: Math.random().toString(16).slice(2) + new Date().getTime(),
@@ -42,7 +46,10 @@ export function CyclesContextProvider({ children }: React.PropsWithChildren) {
       isFinished: false,
       startDate: new Date(),
       get endDate() {
-        return addMinutes(this.startDate, this.durationInMinutes)
+        return addMilliseconds(
+          this.startDate,
+          this.durationInMinutes * 60 * 1000
+        )
       }
     }
 
@@ -79,7 +86,9 @@ export function CyclesContextProvider({ children }: React.PropsWithChildren) {
   return (
     <CyclesContext.Provider
       value={{
+        cycles,
         activeCycle,
+        remainingSeconds: timer.remainingSeconds,
         stopActiveCycle,
         finishActiveCycle,
         createNewCycle

@@ -1,15 +1,12 @@
 import * as React from 'react'
 import { CountdownContainer, Separator } from './styles'
 import { useCyclesContext } from '../../../../contexts/CycleContext'
-import { useCycleTimer } from '../../../../hooks/useCycleTimer'
 
 export function Countdown() {
-  const { activeCycle, finishActiveCycle } = useCyclesContext()
+  const { activeCycle, remainingSeconds } = useCyclesContext()
 
-  const timer = useCycleTimer(activeCycle, { onFinish: finishActiveCycle })
-
-  const currentMinutes = Math.floor(timer.remainingSeconds / 60)
-  const currentSeconds = timer.remainingSeconds % 60
+  const currentMinutes = Math.floor(remainingSeconds / 60)
+  const currentSeconds = remainingSeconds % 60
 
   const [minuteFirstDigit, minuteSecondDigit] = currentMinutes
     .toString()
