@@ -78,10 +78,6 @@ export function useCycleTimer(
 
   React.useEffect(() => {
     clearInterval(tokenInterval.current)
-    console.log('timer useEffect', {
-      RemainingMs: getCycleRemainingMs(cycle),
-      cycle
-    })
     setRemainingSeconds(Math.ceil(getCycleRemainingMs(cycle) / 1000))
 
     if (cycle) {

@@ -14,6 +14,8 @@ const statusLabelMap = {
 export function History() {
   const { cycles } = useCyclesContext()
 
+  const reversedCycles = [...cycles].reverse()
+
   return (
     <HistoryContainer>
       <h1>Meu histórico</h1>
@@ -29,7 +31,7 @@ export function History() {
             </tr>
           </thead>
           <tbody>
-            {cycles.map((cycle) => {
+            {reversedCycles.map((cycle) => {
               const startDateFormatted = formatDistanceToNow(cycle.startDate, {
                 locale: ptBR,
                 addSuffix: true

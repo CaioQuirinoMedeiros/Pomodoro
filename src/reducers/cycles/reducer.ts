@@ -1,6 +1,7 @@
 import { produce } from 'immer'
 
 import { CycleAction, CycleActionTypes } from './actions'
+import { Cycle } from '../../models/cycle'
 
 export type CyclesState = {
   cycles: Cycle[]

@@ -1,3 +1,5 @@
+import { Cycle } from "../../models/cycle"
+
 export enum CycleActionTypes {
   ADD_NEW_CYCLE = 'ADD_NEW_CYCLE',
   FINISH_ACTIVE_CYCLE = 'FINISH_ACTIVE_CYCLE',
