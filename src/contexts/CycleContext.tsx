@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { useCycleTimer } from '../hooks/useCycleTimer'
-import { addMilliseconds, addMinutes } from 'date-fns'
+import { addMilliseconds } from 'date-fns'
+import { CyclesState, cyclesReducer } from '../reducers/cycles/reducer'
+import { addNewCycleAction, finishActiveCycleAction, stopActiveCycleAction } from '../reducers/cycles/actions'
 
 interface Cycle {
   id: string
@@ -29,11 +31,13 @@ interface CyclesContextData {
 const CyclesContext = React.createContext({} as CyclesContextData)
 
 export function CyclesContextProvider({ children }: React.PropsWithChildren) {
-  const [cycles, setCycles] = React.useState<Cycle[]>([])
-  const [activeCycleId, setActiveCycleId] = React.useState<string | null>(null)
+  const [cyclesState, dispatch] = React.useReducer(cyclesReducer, {
+    cycles: [],
+    activeCycleId: null
+  } as CyclesState)
 
-  const activeCycle = cycles.find((cycle) => {
-    return cycle.id === activeCycleId
+  const activeCycle = cyclesState.cycles.find((cycle) => {
+    return cycle.id === cyclesState.activeCycleId
   })
 
   const timer = useCycleTimer(activeCycle, { onFinish: finishActiveCycle })
@@ -53,40 +57,21 @@ export function CyclesContextProvider({ children }: React.PropsWithChildren) {
       }
     }
 
-    setCycles((prevCycles) => [...prevCycles, newCycle])
-    setActiveCycleId(newCycle.id)
+    dispatch(addNewCycleAction(newCycle))
   }
 
   function finishActiveCycle() {
-    setCycles((prevCycles) =>
-      prevCycles.map((prevCycle) => {
-        if (prevCycle.id === activeCycleId) {
-          return { ...prevCycle, isFinished: true }
-        } else {
-          return prevCycle
-        }
-      })
-    )
-    setActiveCycleId(null)
+    dispatch(finishActiveCycleAction())
   }
 
   function stopActiveCycle() {
-    setCycles((prevCycles) =>
-      prevCycles.map((prevCycle) => {
-        if (prevCycle.id === activeCycleId) {
-          return { ...prevCycle, interruptedDate: new Date() }
-        } else {
-          return prevCycle
-        }
-      })
-    )
-    setActiveCycleId(null)
+    dispatch(stopActiveCycleAction())
   }
 
   return (
     <CyclesContext.Provider
       value={{
-        cycles,
+        cycles: cyclesState.cycles,
         activeCycle,
         remainingSeconds: timer.remainingSeconds,
         stopActiveCycle,
